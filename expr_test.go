@@ -55,6 +55,12 @@ func TestIndexGather(t *testing.T) {
 			regexp:   `depth_0 (group_1(group_2)) (group_3)`,
 			expected: []int{0, 36, 8, 26, 16, 25, 27, 36}, // expected order: depth_0, group_1, group_2, group_3
 		},
+		{ // continues above but in more complex way, many groups on same depth
+			//        0/       10/       20/       30/       40/       50/ 54/
+			regexp: `main (g1 (g2 (g3) (g4)) (g5 (g6) (g7))) (g8 (g9) (g10))`, // order expected as numbers goes
+			//                -- , g1   , g2   , g3    , g4    , g5    , g6    , g7    , g8    , g9    , g10
+			expected: []int{0, 55, 5, 39, 9, 23, 13, 17, 18, 22, 24, 38, 28, 32, 33, 37, 40, 55, 44, 48, 49, 54},
+		},
 		{ // the most ultimate test-case I've ever seen
 			//        0/     7/   13/16/ 20/ 24/     32/         44/      53/                   75/
 			regexp:   `prefix (first), (?P<name>second (third inner) padding) \(escaped non-group\)`,
