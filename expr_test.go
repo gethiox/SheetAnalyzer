@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// helper, designed without TTD, implementer promised this function is free from bugs™
+// helper, designed without TDD, implementer promised this function is free from bugs™
 func intSliceEqual(a, b []int) bool {
 	if len(a) != len(b) {
 		return false
