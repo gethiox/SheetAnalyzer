@@ -50,6 +50,11 @@ func TestIndexGather(t *testing.T) {
 			`\(nope\)`,
 			[]int{0, 8},
 		},
+		{ // test for proper submatch order, returned sequence should match "beginning of submatch" sequence (not depth)
+			//        0/      8/     16/     24/27/     35/
+			regexp:   `depth_0 (group_1(group_2)) (group_3)`,
+			expected: []int{0, 36, 8, 26, 16, 25, 27, 36}, // expected order: depth_0, group_1, group_2, group_3
+		},
 		{ // the most ultimate test-case I've ever seen
 			//        0/     7/   13/16/ 20/ 24/     32/         44/      53/                   75/
 			regexp:   `prefix (first), (?P<name>second (third inner) padding) \(escaped non-group\)`,
