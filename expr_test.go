@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-func intSliceError(t *testing.T, expr string, expected, got []int) {
-	t.Errorf("\n    expr: \"%s\"\nexpected: %#v\n     got: %#v", expr, expected, got)
+func intSliceError(t *testing.T, testNumber int, expr string, expected, got []int) {
+	t.Errorf("%d\n    expr: \"%s\"\nexpected: %#v\n     got: %#v", testNumber, expr, expected, got)
 }
 
 func TestExprFindSubmatchIndex(t *testing.T) {
@@ -59,14 +59,18 @@ func TestExprFindSubmatchIndex(t *testing.T) {
 		},
 	}
 
-	for _, c := range testCases {
-		regexp.MustCompile(c.regexp)
+	for i, c := range testCases {
+		_, err := regexp.Compile(c.regexp)
+		if err != nil {
+			t.Errorf("%d: \"%s\": compilation failed: (%s)", i, c.regexp, err)
+			continue
+		}
 
 		indexes := ExprFindSubmatchIndex(c.regexp)
 
 		equal := reflect.DeepEqual(indexes, c.expected)
 		if !equal {
-			intSliceError(t, c.regexp, c.expected, indexes)
+			intSliceError(t, i, c.regexp, c.expected, indexes)
 		}
 
 	}
@@ -94,12 +98,12 @@ func TestExprSeparateSubmatchName(t *testing.T) {
 		},
 	}
 
-	for _, c := range testCases {
+	for i, c := range testCases {
 		indexes := ExprSeparateSubmatchName(c.regexp)
 
 		equal := reflect.DeepEqual(indexes, c.expected)
 		if !equal {
-			intSliceError(t, c.regexp, c.expected, indexes)
+			intSliceError(t, i, c.regexp, c.expected, indexes)
 		}
 	}
 }
