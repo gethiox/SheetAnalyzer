@@ -19,7 +19,11 @@ func intSliceEqual(a, b []int) bool {
 	return true
 }
 
-func TestIndexGather(t *testing.T) {
+func intSliceError(t *testing.T, expr string, expected, got []int) {
+	t.Errorf("\n    expr: \"%s\"\nexpected: %#v\n     got: %#v", expr, expected, got)
+}
+
+func TestExprFindSubmatchIndex(t *testing.T) {
 	type testCase struct {
 		regexp   string
 		expected []int
@@ -75,7 +79,7 @@ func TestIndexGather(t *testing.T) {
 
 		equal := intSliceEqual(indexes, c.expected)
 		if !equal {
-			t.Errorf("\n    expr: \"%s\"\nexpected: %#v\n     got: %#v", c.regexp, c.expected, indexes)
+			intSliceError(t, c.regexp, c.expected, indexes)
 		}
 
 	}
@@ -108,7 +112,7 @@ func TestExprSeparateSubmatchName(t *testing.T) {
 
 		equal := intSliceEqual(indexes, c.expected)
 		if !equal {
-			t.Errorf("\n    expr: \"%s\"\nexpected: %#v\n     got: %#v", c.regexp, c.expected, indexes)
+			intSliceError(t, c.regexp, c.expected, indexes)
 		}
 	}
 }
