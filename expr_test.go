@@ -99,7 +99,7 @@ func TestExprSeparateSubmatchName(t *testing.T) {
 		},
 		{
 			`(?P<name>content)`,
-			[]int{4, 8, 9, 16}, // name should be detected and returned separately
+			[]int{4, 8, 9, 16}, // name should be recognized and ranges returned separately (name and content)
 		},
 	}
 
