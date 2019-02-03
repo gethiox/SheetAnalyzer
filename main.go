@@ -1,5 +1,7 @@
 package main
 
+import "regexp"
+
 // interface inspired by regexp.Regex.FindSubmatchIndex but designed for regular expression itself than it's match instead
 // expression should compile correctly first, otherwise behavior is undefined and may panic as well
 func ExprFindSubmatchIndex(expr string) (returnIndexes []int) {
@@ -41,6 +43,13 @@ func ExprFindSubmatchIndex(expr string) (returnIndexes []int) {
 	return
 }
 
+var regexpName = regexp.MustCompile(`\(\?P<([a-zA-Z_][a-zA-Z0-9_]*)>(.*)\)`)
+
 func ExprSeparateSubmatchName(expr string) []int {
-	return []int{}
+	match := regexpName.MatchString(expr)
+	if !match {
+		return []int{1, len(expr) - 1} // assume submatch without a name was passed, returns everything excluding parenthesizes
+	}
+
+	return regexpName.FindStringSubmatchIndex(expr)[2:]
 }
