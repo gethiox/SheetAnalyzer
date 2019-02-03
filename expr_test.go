@@ -1,23 +1,10 @@
 package main
 
 import (
+	"reflect"
 	"regexp"
 	"testing"
 )
-
-// helper, designed without TDD, implementer promised this function is free from bugs™
-func intSliceEqual(a, b []int) bool {
-	if len(a) != len(b) {
-		return false
-	}
-
-	for i := 0; i < len(a); i++ {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
-}
 
 func intSliceError(t *testing.T, expr string, expected, got []int) {
 	t.Errorf("\n    expr: \"%s\"\nexpected: %#v\n     got: %#v", expr, expected, got)
@@ -77,7 +64,7 @@ func TestExprFindSubmatchIndex(t *testing.T) {
 
 		indexes := ExprFindSubmatchIndex(c.regexp)
 
-		equal := intSliceEqual(indexes, c.expected)
+		equal := reflect.DeepEqual(indexes, c.expected)
 		if !equal {
 			intSliceError(t, c.regexp, c.expected, indexes)
 		}
@@ -110,7 +97,7 @@ func TestExprSeparateSubmatchName(t *testing.T) {
 	for _, c := range testCases {
 		indexes := ExprSeparateSubmatchName(c.regexp)
 
-		equal := intSliceEqual(indexes, c.expected)
+		equal := reflect.DeepEqual(indexes, c.expected)
 		if !equal {
 			intSliceError(t, c.regexp, c.expected, indexes)
 		}
