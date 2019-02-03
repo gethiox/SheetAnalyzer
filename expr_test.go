@@ -80,3 +80,73 @@ func TestIndexGather(t *testing.T) {
 
 	}
 }
+
+func TestExprSeparateSubmatchName(t *testing.T) {
+	type testCase struct {
+		regexp   string
+		mustFail bool
+		expected []int
+	}
+
+	var testCases = []testCase{
+		{
+			``,
+			true, // it's not a proper submatch
+			[]int{},
+		},
+		{
+			`?P<name>content`,
+			true, // it's not a proper submatch
+			[]int{},
+		},
+		{
+			`(?P<name>content`,
+			true, // it's not a proper submatch
+			[]int{},
+		},
+		{
+			`?P<name>content)`,
+			true, // it's not a proper submatch
+			[]int{},
+		},
+		{
+			`(?P<>content)`,
+			true, // it's ALMOST a proper submatch
+			[]int{},
+		},
+		{
+			`()`,
+			false,
+			[]int{1, 1},
+		},
+		{
+			`(content)`,
+			false,
+			[]int{1, 8},
+		},
+		{
+			`(?P<name>content)`,
+			false,
+			[]int{4, 8, 9, 16}, // name should be detected and returned separately
+		},
+	}
+
+	for _, c := range testCases {
+		indexes, err := ExprSeparateSubmatchName(c.regexp)
+
+		if c.mustFail {
+			if err == nil {
+				t.Errorf("should return an error, but got nil")
+			}
+		} else {
+			if err != nil {
+				t.Errorf("should not return an error")
+			}
+		}
+
+		equal := intSliceEqual(indexes, c.expected)
+		if !equal {
+			t.Errorf("\n    expr: \"%s\"\nexpected: %#v\n     got: %#v", c.regexp, c.expected, indexes)
+		}
+	}
+}

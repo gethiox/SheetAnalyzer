@@ -40,3 +40,7 @@ func ExprFindSubmatchIndex(expr string) (returnIndexes []int) {
 
 	return
 }
+
+func ExprSeparateSubmatchName(expr string) ([]int, error) {
+	return []int{}, nil
+}
