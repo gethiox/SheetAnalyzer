@@ -9,9 +9,9 @@ func ExprFindSubmatchIndex(expr string) (returnIndexes []int) {
 
 	var indexPairs [][2]int // keeps proper order of founded submatches
 
-	var depth int                   // depth of submatch recursion level
-	var counter int                 // global submatch occurence
-	var tracker = make(map[int]int) // depth -> submatch occurrence counter value
+	var depth int                    // depth of submatch recursion level
+	var counter int                  // global submatch occurence
+	var toUpdate = make(map[int]int) // depth -> submatch occurrence
 
 	var previous, current rune
 
@@ -22,14 +22,18 @@ func ExprFindSubmatchIndex(expr string) (returnIndexes []int) {
 
 		switch {
 		case current == '(' && previous != '\\':
-			pair := [2]int{i, -1}
+			pair := [2]int{i, -1} // saving start index for new submatch
 			indexPairs = append(indexPairs, pair)
-			tracker[depth] = counter
+
+			toUpdate[depth] = counter
 			counter += 1
 			depth += 1
 		case current == ')' && previous != '\\':
 			depth -= 1
-			indexPairs[tracker[depth]][1] = i + 1
+
+			pair := &indexPairs[toUpdate[depth]] // read pair on current depth that is claimed to be closed
+			pair[1] = i + 1                      // updating end index
+			// "delete(toUpdate, depth)" could be used here to keep logic clean but saving CPU cycles sounds better
 		}
 		previous = current
 	}
